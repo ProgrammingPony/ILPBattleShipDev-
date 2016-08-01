@@ -31,30 +31,10 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 	
 	private BattleGrid player1Board = new BattleGrid();
 	private BattleGrid player2Board = new BattleGrid();
-	private ArrayList<int[]> player1TilesHit = new ArrayList<int[]>();
-	private ArrayList<int[]> player2TilesHit = new ArrayList<int[]>();
-	private ArrayList<int[]> computerTilesHit = new ArrayList<int[]>();
 	
 	//Communication with Artificial Intelligence Module
-    ArtificialIntelligence computer = new ArtificialIntelligence();
+    ArtificialIntelligence computer = new ArtificialIntelligence();;
 	
-    // July 29 (Erik) Create DrawingComponent object for game messages to create messageCenter object
-    messageCenter message = new messageCenter();
-	
-    // July 30 (Erik) create a boolean to determine when the board is struck
-    private boolean isTileStruck = false;
-    
-    // July 31 (Erik) create a boolean to know when ships are placed at start of game for all players
-     
-    private boolean isAllShipPlaced; 
-    
-    // July 31 (Erik) Create a boolean to determine if ship Placement is out of bounds 
-    // this boolean is defined in the mousePressed and used to print messages when player
-    // attempts to place ships out of bounds 
-    private boolean isOutOfBounds = false;
-    
-    private boolean startGame;// used to determine when the game has started - after all ships are placed
-    
 	//Switches that indicate whether to draw the ships or not.
 	private boolean drawCarrier, drawBattleship, drawCruiser, drawDestroyer1, drawDestroyer2, drawSubmarine1, drawSubmarine2;
 
@@ -67,10 +47,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 	//Load game prompt, and a switch that makes sure that the player is asked only once, and one that makes sure the AI generates.
 	private int loadGame = 0;
 	private boolean loadPrompt = true;
-	
-	// July 30 2016 (Erik) create graphics object in paint method to print messages and 
-	// prompts  for placing ships, placing ships out of bounds and hit or miss ships during game play.
-	
 	
 	/**
 	 * @param
@@ -100,26 +76,28 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 		
 		repaint();	//refresh
 		if (shipSwitch == 0) {
-			if (player1Board.getPlayerTurn() == BattleGrid.PlayerTurn.PLAYER2) {
-				while (!successfullyHitTile) {
-					ArtificialIntelligence.Target target = computer.getNextMove(player1Board);
-					int row = computer.getTargetRow(target);
-					int column = computer.getTargetColumn(target);
-					successfullyHitTile = player1Board.markSquareAsHit(row, column, computer.computerGrid);
-					
-					if (successfullyHitTile) {
-						player1TilesHit = player1Board.getHitTiles();
+			if (imageSwitch == 1) {
+				if (player1Board.getPlayerTurn() == BattleGrid.PlayerTurn.PLAYER2) {
+					while (!successfullyHitTile) {
+						ArtificialIntelligence.Target target = computer.getNextMove(player1Board);
+						int row = computer.getTargetRow(target);
+						int column = computer.getTargetColumn(target);
+						successfullyHitTile = player1Board.markSquareAsHit(row, column, computer.computerGrid);
 						
-					    victoryConditionMet = player1Board.checkVictoryCondition();
-					    //If this happened while its the computers turn then the computer must have won!
-					    if (victoryConditionMet) {					    
-					      JOptionPane.showMessageDialog(null, "The Computer has won! \n Click 'Ok' to return to the main menu.");
-						  imageSwitch = 0;
-						  resetGame();
-					    }
-					    
-						player1Board.changePlayerTurn();	
-						
+						if (successfullyHitTile) {
+							//player1TilesHit = player1Board.getHitTiles();
+							
+						    victoryConditionMet = player1Board.checkVictoryCondition();
+						    //If this happened while its the computers turn then the computer must have won!
+						    if (victoryConditionMet) {					    
+						      JOptionPane.showMessageDialog(null, "The Computer has won! \n Click 'Ok' to return to the main menu.");
+							  imageSwitch = 0;
+							  resetGame();
+						    }
+						    
+							player1Board.changePlayerTurn();	
+							
+						}
 					}
 				}
 			}
@@ -266,8 +244,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 					case TwoPlayer:
 						imageSwitch = 5;
 						break;
-					default: 
-						break;
 					}
 					
 					
@@ -286,8 +262,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 			Font font = new Font("Arial", Font.PLAIN, 24);
 			graphics.setFont (font);
 			graphics.drawString( Integer.toString(player1Board.getPlayerScore() ) , 155, 669) ;
-			
-		
 			
 			//Draw player 1 pieces 
 			if (drawCarrier == true) {	//If the switch for carrier is true...
@@ -338,135 +312,37 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 				else
 					graphics.drawImage(P1ROTsubmarine2, player1Board.submarine2X, player1Board.submarine2Y, this);
 			}
-			
-						
-			/*if (shipSwitch == 0 && clickCount >6)
-				isShipPlacedPlayer1 = true;
-			else if (shipSwitch <=7 && clickCount >0)
-				isShipPlacedPlayer1 = false;*/
-			
-			// July 30 2016 (Erik) Check condition of ship placement and display messages
-			if (shipSwitch <=7 && clickCount >0){
 				
-				if(startGame == false){
-					// July 31 2016 ensure not out of bounds (Erik)  
-					if( isOutOfBounds == true){
-						Graphics mesg2 = message.PlayerOneOutOfBounds(graphics);
-						// mesg2.dispose();
-					}
-					Graphics mesg = message.PlayerOneShipPlace(graphics);
-					//mesg.dispose();
-				}			
-			}
-			else if (shipSwitch == 0 && clickCount >6){
-				
-				if(startGame == true){
-					Graphics mesg = message.PlayerOneShipPlaceComplete(graphics);
-					//mesg.dispose();
-					isAllShipPlaced = true; // Start playing message
-				
-
-					if(isAllShipPlaced == true){
-						Graphics mesg2 = message.startGameMessage(graphics);
-						//mesg2.dispose();
-					}
-			
-				}
-			}
-				
-		    
-			if (startGame == true){
-				//Draw playerTiles which have been hit	
-				BattleGrid.ShipLabel ship;
+		    //Draw playerTiles which have been hit	
+		    BattleGrid.ShipLabel ship;
 		        
-				for (int[] item : player1TilesHit) {
-					ship = player1Board.getShipOccupyingSquare(item[0], item[1]);
-					if (ship != BattleGrid.ShipLabel.NO_SHIP)
-					{
-						graphics.setColor(Color.orange);
-						// (Erik) if there is at least one hit by player
-						if (player1TilesHit.size() >1)
-							isTileStruck = true;
-					}
-					else{
-						graphics.setColor(Color.red);
-		    	
-						if(player1TilesHit.size() > 1)
-							isTileStruck = false;
-						
-					}
-					graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
-		    	
-				}
-			
+		    for (int[] item : player1Board.getHitTiles()) {
+		      ship = player1Board.getShipOccupyingSquare(item[0], item[1]);
+		      if (ship != BattleGrid.ShipLabel.NO_SHIP)
+		        graphics.setColor(Color.orange);
+		      else
+		        graphics.setColor(Color.red);
+		      graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
+		    }
+			  
+		    //Draw computerTiles which have been hit
+		    for (int[] item : computer.computerGrid.getHitTiles()) {
+		      ship = computer.computerGrid.getShipOccupyingSquare(item[0], item[1]);	
+		      if (ship != BattleGrid.ShipLabel.NO_SHIP)
+			    graphics.setColor(Color.orange);
+			  else
+			    graphics.setColor(Color.red);
+			  graphics.fillRect(item[1]*50+633, item[0]*50+131, 45, 45);	  
+	        }
 		    
-		    	  
-				//Draw computerTiles which have been hit
-				for (int[] item : computerTilesHit) {
-					ship = computer.computerGrid.getShipOccupyingSquare(item[0], item[1]);	
-					if (ship != BattleGrid.ShipLabel.NO_SHIP){
-		    		
-						graphics.setColor(Color.orange);
-						// (Erik) for computer messages to gameboard
-						if (computerTilesHit.size() > 1)
-							isTileStruck = true;
-		    				//mesg.dispose();
-					}
-					else{
-		    		
-						graphics.setColor(Color.red);
-						if(computerTilesHit.size() >1)
-							isTileStruck =false;
-		    			
-					}
-					graphics.fillRect(item[1]*50+633, item[0]*50+131, 45, 45);	  
-		    	
-					//repaint();
-				}
-		    
-				// July 30 (Erik) If the tile is struck we print a message to the user.
-				// If it is the players turn we print player message. If it is the computers turn we print computer message.
-				if(isTileStruck == true)
-				{
-					if(BattleGrid.PlayerTurn.PLAYER1 != null)
-					{
-						Graphics mesg = message.PlayerOneHitMessage(graphics);
-						//msg.dispose();
-					}		 				
-					else
-					{
-						Graphics mesg = message.ComputerHitMessage(graphics);
-						//msg.dispose();
-					}
-					//mesg.dispose();
-		 		
-				}					
-				else 
-				{
-					// if it is not Player1 or Player2 turn it must be computer turn		
-					if (BattleGrid.PlayerTurn.PLAYER1 == null && BattleGrid.PlayerTurn.PLAYER2 == null)
-					{
-						Graphics mesg = message.ComputerMissMessage(graphics);
-						//msg.dispose();
-					}
-		 				
-					else if (BattleGrid.PlayerTurn.PLAYER1 != null && BattleGrid.PlayerTurn.PLAYER2 == null)
-					{
-						Graphics mesg = message.PlayerOneMissMessage(graphics);
-						//msg.dispose();
-					}
-					//mesg.dispose();
-				}
-		    
-		    
-				//Draw color tiles which haven't been hit	    
-				if (lightSwitch == 1)
-					graphics.drawImage(greenRectangle, flashX, flashY, this);
-				else if (lightSwitch == 2)
+		    //Draw color tiles which haven't been hit	    
+	    	if (lightSwitch == 1)
+				graphics.drawImage(greenRectangle, flashX, flashY, this);
+			else if (lightSwitch == 2)
 				graphics.drawImage(yellowRectangle, flashX, flashY, this);
 			
 		}
-		
+
 		//Draw rules menu if imageSwitch is equal to 2.
 		else if (imageSwitch == 2)
 			graphics.drawImage(rulesMenu, 0, 0, this);
@@ -474,8 +350,8 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 		//Draw High Score menu
 		else if (imageSwitch == 3) {
 			graphics.drawImage(scoresMenu, 0, 0, this);
-			Font font1 = new Font("Arial", Font.PLAIN, 34);
-			graphics.setFont(font1);
+			Font font = new Font("Arial", Font.PLAIN, 34);
+			graphics.setFont (font);
 			
 			String playerInfo = InputOutput.getHighestPlayerStanding(player1Board.name);
 			
@@ -500,8 +376,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 				
 				//Draw player 1 pieces only if player 1 is selecting ships
 				if ( playerPlacingShips == Player.Player1 ) {
-					
-					
 					if (drawCarrier == true) {	//If the switch for carrier is true...
 						if (player1Board.ROTCarrier == false)	//If the rotation switch for carrier is false...
 							graphics.drawImage(P1carrier, player1Board.carrierX, player1Board.carrierY, this);	//Draw carrier
@@ -550,38 +424,10 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 						else
 							graphics.drawImage(P1ROTsubmarine2, player1Board.submarine2X, player1Board.submarine2Y, this);
 					}
-					
-					/*if (shipSwitch == 0 && clickCount >6)
-					isShipPlacedPlayer1 = true;
-					
-					else if (shipSwitch <=7 && clickCount >0)
-					isShipPlacedPlayer1 = false;*/
-					
-					// July 30 2016 (Erik) Check condition of ship placement and display messages
-					if (shipSwitch <=7 && clickCount >0){
-						if (startGame == false){
-							// July 31 2016 ensure not out of bounds (Erik)  
-							if( isOutOfBounds == true){
-								Graphics mesg2 = message.PlayerOneOutOfBounds(graphics);
-								// mesg2.dispose();
-							}
-							Graphics mesg = message.PlayerOneShipPlace(graphics);
-							//mesg.dispose();
-						}
-						
-					}
-					else if (shipSwitch == 0 && clickCount >6){
-						if (startGame == true){
-							Graphics mesg = message.PlayerOneShipPlaceComplete(graphics);
-							//mesg.dispose();
-						
-					}
 				}
 				
 				//Show player 2 pieces only during ship placement phase
 				else if ( playerPlacingShips == Player.Player2 ) {
-					
-			
 					//Draw Player 2 Pieces
 					if (drawCarrier == true) {	//If the switch for carrier is true...
 						if (player2Board.ROTCarrier == false)	//If the rotation switch for carrier is false...
@@ -631,144 +477,46 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 						else
 							graphics.drawImage(P2ROTsubmarine2, player2Board.submarine2X, player2Board.submarine2Y, this);
 					}
-					
-
-					/*if (shipSwitch == 0 && clickCount >6)
-					isShipPlacedPlayer1 = true;
-					
-					else if (shipSwitch <=7 && clickCount >0)
-					isShipPlacedPlayer1 = false;*/
-					
-					
-					// July 30 2016 (Erik) Check condition of ship placement and display messages
-					if (shipSwitch <=7 && clickCount >0)
-						// July 31 2016 ensure not out of bounds (Erik)  
-						if (startGame == false){
-							if( isOutOfBounds == true){
-								Graphics mesg2 = message.PlayerTwoOutOfBounds(graphics);
-								// mesg2.dispose();
-							}
-							Graphics mesg = message.PlayerTwoShipPlace(graphics);
-							//mesg.dispose();
-						}
-						
-					}
-					else if (shipSwitch == 0 && clickCount >6){
-						if(startGame == true){
-							Graphics mesg = message.PlayerTwoShipPlaceComplete(graphics);
-							//mesg.dispose();					
-							isAllShipPlaced = true;						
-						}
-						
-						if(isAllShipPlaced){
-						Graphics mesg2 = message.startGameMessage(graphics);
-						// mesg2.dispose();
-						}
-					}
 				}
-			}
-		}
+			}			
 			
-		    if(startGame == true)
-		    {
-		    	//Draw playerTiles which have been hit	
-		    	BattleGrid.ShipLabel ship;
+		    //Draw playerTiles which have been hit	
+		    BattleGrid.ShipLabel ship;
 		        
-		    	for (int[] item : player1TilesHit) {
-		    		ship = player1Board.getShipOccupyingSquare(item[0], item[1]);
-		    		if (ship != BattleGrid.ShipLabel.NO_SHIP){
-		    			graphics.setColor(Color.orange);
-		    			if(player1TilesHit.size() > 1)
-		    				isTileStruck = true;
-		    		}
-		    		else{
-		    			graphics.setColor(Color.red);
-		    			if(player1TilesHit.size()>1)
-		    				isTileStruck = false;
-		    		}
-		    		graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
-		    		//mesg.dispose();
-		    		//repaint();
-		    	}
+		    for (int[] item : player1Board.getHitTiles()) {
+		      ship = player1Board.getShipOccupyingSquare(item[0], item[1]);
+		      if (ship != BattleGrid.ShipLabel.NO_SHIP)
+		        graphics.setColor(Color.orange);
+		      else
+		        graphics.setColor(Color.red);
+		      graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
+		    }
+			
+		    for (int[] item : player2Board.getHitTiles()) {
+			      ship = player2Board.getShipOccupyingSquare(item[0], item[1]);
+			      if (ship != BattleGrid.ShipLabel.NO_SHIP)
+			        graphics.setColor(Color.orange);
+			      else
+			        graphics.setColor(Color.red);
+			      graphics.fillRect(item[1]*50+633, item[0]*50+131, 45, 45);
+		    }
 		    
 		    
-		    	for (int[] item : player2TilesHit) {
-		    		ship = player2Board.getShipOccupyingSquare(item[0], item[1]);
-			      
-		    		if (ship != BattleGrid.ShipLabel.NO_SHIP){
-		    			graphics.setColor(Color.orange);
-		    			if (player2TilesHit.size()>1)
-		    				isTileStruck = true;
-		    		}
-		    		else{
-			        
-		    			graphics.setColor(Color.red);
-		    			if (player2TilesHit.size() >1)
-		    				isTileStruck = false;
-		    		}
-		    		graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
-		    		//mesg.dispose();
-		    		//repaint();
-				    
-		    	}
-		    
-		    	if(isTileStruck == true)
-		    	{
-		    		if(BattleGrid.PlayerTurn.PLAYER1 != null)
-		    		{
-		    			Graphics mesg = message.PlayerOneHitMessage(graphics);
-		    			//msg.dispose();
-		    		}
-		 				
-		    		else if (BattleGrid.PlayerTurn.PLAYER2 != null)
-		    		{
-		    			Graphics mesg = message.PlayerTwoHitMessage(graphics);
-		    			//msg.dispose();
-		    		}
-		    		//mesg.dispose();
-		 		
-		    	}					
-		    	else 
-		    	{
-		    		// if it is not Player1 it must be player2 turn and visaversa.		
-		    		if (BattleGrid.PlayerTurn.PLAYER1 == null)
-		    		{
-		    			Graphics mesg = message.PlayerTwoMissMessage(graphics);
-		    			//msg.dispose();
-		    		}
-		 				
-		    		else if (BattleGrid.PlayerTurn.PLAYER2 == null)
-		    		{
-		    			Graphics mesg =message.PlayerOneMissMessage(graphics);
-		    			//msg.dispose();
-		    		}
-		    		//mesg.dispose();
-		    	}
-		    
-		    
-		    	//Draw color tiles which haven't been hit
-		    	if ( playerPlacingShips == Player.Player1 || allShipsPlaced ) {
-		    		if (lightSwitch == 1)
-		    			graphics.drawImage(greenRectangle, flashX, flashY, this);
-		    		else if (lightSwitch == 2)
-		    			graphics.drawImage(yellowRectangle, flashX, flashY, this);
-		    	}
-		    	else 
-		    	{
-		    		if (lightSwitch == 1){
-		    			graphics.drawImage(yellowRectangle, flashX, flashY, this);
-		    		}
-		    		else if (lightSwitch == 2){
+		   //Draw color tiles which haven't been hit
+		    if ( playerPlacingShips == Player.Player1 || allShipsPlaced ) {
+		    	if (lightSwitch == 1)
 					graphics.drawImage(greenRectangle, flashX, flashY, this);
-		    		}
-		    	}
+				else if (lightSwitch == 2)
+					graphics.drawImage(yellowRectangle, flashX, flashY, this);
+		    } else {
+		    	if (lightSwitch == 1)
+					graphics.drawImage(yellowRectangle, flashX, flashY, this);
+				else if (lightSwitch == 2)
+					graphics.drawImage(greenRectangle, flashX, flashY, this);
 		    }
 		}
+		
 	}
-		
-	
-		
-	
 	
 	
 	/**
@@ -844,7 +592,7 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 		else if (imageSwitch == 1) {	//When the 1 Player game screen is present
 			
 			if (x >= 968 && x <= (968 + 161) && y >= 693 && y <= (693 + 51)) {	//If the 'quit game' is clicked...
-			    if (!computerTilesHit.isEmpty() && (currentMode == GameMode.OnePlayer) ) {
+			    if (!computer.computerGrid.getHitTiles().isEmpty() && (currentMode == GameMode.OnePlayer) ) {
 			        Save(GameMode.OnePlayer);
 			        currentMode = GameMode.None;
 			        playerPlacingShips = Player.Player1;
@@ -859,23 +607,14 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 				//Prevents out-of-player-bounds clicks.
 				if ( x<=600  ) {		//If clicked is on player side...
 					//Makes sure player-board edges (not included in stored coordinates) do not interfere with 'boxes'.  
-					
-					// July 31 (Erik) use an isOutOfBounds Boolean to determine in one player mode when placement
-					// of ships is invalid
-					
 					if (Switch == true)	//If the main switch is true...
 						player1Board(x, y);	//Generate storedX and storedY at appropriate coordinate, if no coordinate is found set the switch to false
-						isOutOfBounds = false;
 					if (Switch == false) {	//If the main switch is false
 						clickCount = clickCount - 1;	//set click counter back by one, we don't want the last click (which didn't generate coordinates) to count!
 						player1Board(x, y);	//Try generating again, if no coordinates are generated this segment of the code will repeat.
-						isOutOfBounds = true;
 						Switch = true;
 					}
 					else if (shipSwitch == 7 && clickCount > 0) {	//First ship, first click					
-						
-						// July 31 (Erik)
-						startGame = false;
 						//If statements prevent out of bounds deployment of ships.
 						if (player1Board.ROTCarrier == false) {
 							orientation = BattleGrid.ShipRotation.HORIZONTAL;							
@@ -1095,7 +834,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 					}
 				}
 				if (shipSwitch == 0) {
-					startGame = true;
 					if (x >= 633 && x <= (633 + 495) && y >= 131 && y <= (131 + 495) && player1Board.getPlayerTurn() == BattleGrid.PlayerTurn.PLAYER1) {
 						int row = calculatePlayer2RowIndex(y);
 						int column = calculatePlayer2ColumnIndex(x);
@@ -1103,28 +841,24 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 						
 						if (successfullyHitTile) {
 						    victoryConditionMet = computer.computerGrid.checkVictoryCondition();
-							player1Board.changePlayerTurn();	
-							computerTilesHit = computer.computerGrid.getHitTiles();	
+							player1Board.changePlayerTurn();
 							
 						    //If condition while the computer's ship was hit last, then this must mean that the Player has won.
 						    if (victoryConditionMet) {	
 						    
 						      //Only updates scores for player if their name is defined.	
-						      if (!player1Board.name.equals("")) {						      
-						        InputOutput.updateScores(player1Board);	 
-								JOptionPane.showMessageDialog(null, "You have won! \n Click 'Ok' to return to the main menu.");
-						      }
-						      else {
-								JOptionPane.showMessageDialog(null, player1Board.name +" has won! \n Your Score has been recorded! Click 'Ok' to return to the main menu.");
+						      if (player1Board.name == null || player1Board.name.equals(""))
+						    	  player1Board.name = "Player 1";
+						      
+					          InputOutput.updateScores(player1Board);
+							  JOptionPane.showMessageDialog(null, "You have won! \n Your Score has been recorded! Click 'Ok' to return to the main menu.");
 
 							  imageSwitch = 0;
-							  resetGame();
-							  }
+							  resetGame();							  
 						    }
 					
 						}
 					}
-					
 				}
 			}
 		}
@@ -1173,7 +907,7 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 			
 			//Clicks Save and Quit Button
 			if (x >= 968 && x <= (968 + 161) && y >= 693 && y <= (693 + 51)) {
-			    if ( !player2TilesHit.isEmpty() && (currentMode == GameMode.TwoPlayer) ) {
+			    if ( !player2Board.getHitTiles().isEmpty() ) {
 			        Save(GameMode.TwoPlayer); //Save game
 			    	currentMode = GameMode.None;
 			    	playerPlacingShips = Player.Player1;
@@ -1260,19 +994,10 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 					}					
 				}
 				
-				
-				
-				
-				
 				//Prevents out-of-player-bounds clicks.
 				if (( x <= 600 && ( playerPlacingShips==Player.Player1 || allShipsPlaced ) ) || ( x>=624 && x<=1132 && playerPlacingShips == Player.Player2 )) {		//If clicked is on player side...
 					//Makes sure player-board edges (not included in stored coordinates) do not interfere with 'boxes'.  
-					
-					
-					//July 31 2016 (Erik) In two player mode define for out of bounds conditions called isOutOfBounds
 					if (Switch) {	//If the main switch is true...
-						
-						isOutOfBounds = false;
 						if (playerPlacingShips == Player.Player1 || allShipsPlaced)
 							player1Board(x, y);	//Generate storedX and storedY at appropriate coordinate, if no coordinate is found set the switch to false
 						else
@@ -1282,13 +1007,9 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 					if (!Switch) {	//If the main switch is false
 						clickCount = clickCount - 1;	//set click counter back by one, we don't want the last click (which didn't generate coordinates) to count!
 						player1Board(x, y);	//Try generating again, if no coordinates are generated this segment of the code will repeat.
-						isOutOfBounds = true;
 						Switch = true;
 					}
 					else if (shipSwitch == 7 && clickCount > 0) {	//First ship, first click					
-						
-						// July 31 (Erik) define a start game boolean status false until all ships placed
-						startGame = false;						
 						//If statements prevent out of bounds deployment of ships. 
 						ship = BattleGrid.ShipLabel.AIRCRAFT_CARRIER;
 						
@@ -1690,7 +1411,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 						}
 						
 						if (successfullyAddedShip) {
-							shipSwitch = 0;
 							drawSubmarine2 = true;
 							
 							if (playerPlacingShips == Player.Player1) {
@@ -1716,39 +1436,8 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 							clickCount--;
 					}
 				}
-				if (shipSwitch == 0) {
-					startGame = true;
-					if (x >= 633 && x <= (633 + 495) && y >= 131 && y <= (131 + 495) && player1Board.getPlayerTurn() == BattleGrid.PlayerTurn.PLAYER1) {
-						int row = calculatePlayer2RowIndex(y);
-						int column = calculatePlayer2ColumnIndex(x);
-						successfullyHitTile = computer.computerGrid.markSquareAsHit(row, column, player1Board);
-						
-						if (successfullyHitTile) {
-						    victoryConditionMet = computer.computerGrid.checkVictoryCondition();
-							player1Board.changePlayerTurn();
-							
-						    //If condition while the computer's ship was hit last, then this must mean that the Player has won.
-						    if (victoryConditionMet) {	
-						    
-						      //Only updates scores for player if their name is defined.	
-						      if (!player1Board.name.equals("")) {						      
-						        InputOutput.updateScores(player1Board);	 
-								JOptionPane.showMessageDialog(null, "You have won! \n Click 'Ok' to return to the main menu.");
-						      }
-						      else {
-						    	  JOptionPane.showMessageDialog(null, player1Board.name +" has won! \n Your Score has been recorded! Click 'Ok' to return to the main menu.");
-
-								  imageSwitch = 0;
-								  resetGame();
-							  }
-						    }
-					
-						}
-					} else if (x >= 73 && x <= (73 + 495) && y >= 131 && y <= (131 + 495) && player1Board.getPlayerTurn() == BattleGrid.PlayerTurn.PLAYER2) {
-						
-					}
-					
-				}
+				
+				
 			}
 		}
 	}
@@ -2124,7 +1813,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 	      if (currentMode == GameMode.OnePlayer){
 	    	  BattleGrid.importData(fileReader, player1Board, computer.computerGrid); 
 	    	  computer.importData(fileReader);//Read AI details: ONLY applies to AI
-	    	  computerTilesHit = computerGrid.getHitTiles();
 	    	  
 	    	  //Set all ships as viewable only if reading file was successful.
 			  drawCarrier = true;
@@ -2137,11 +1825,9 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 	      }
 	      else if (currentMode == GameMode.TwoPlayer) {
 	    	  BattleGrid.importData(fileReader, player1Board, player2Board);
-	    	  player2TilesHit = player2Board.getHitTiles();
 	      }
         	  
-          //Applies to both game modes                    
-          player1TilesHit = player1Board.getHitTiles();
+          //Applies to both game modes               
           
           //Finalization
           clickCount = 7;
@@ -2217,10 +1903,6 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 	public void resetGame(){
 	    player1Board = new BattleGrid();
 	    computer = new ArtificialIntelligence();
-	
-		player1TilesHit = new ArrayList<int[]>();
-		computerTilesHit = new ArrayList<int[]>();
-		player2TilesHit = new ArrayList<int[]>();
 		
 		//Switches that indicate whether to draw the ships or not.
 		drawCarrier = false;

@@ -1,6 +1,3 @@
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 import javax.swing.*;
 /**
  * Creates and maintains the game frame (screen).
@@ -12,10 +9,7 @@ import javax.swing.*;
 public class Battleships {
 
 	public static void main(String[] args) {
-	
 		new Battleships();	//Creates a new instance of Battleships (line 9)
-		
-	
 	}
 	
 	/**
@@ -30,13 +24,8 @@ public class Battleships {
 		JFrame frame = new JFrame();	//Creates a new frame.
 		frame.setTitle("Battleships Game");	//Sets the title of the frame.
 		frame.add(new Board());	//Creates a new instance of the Board class and displays it on the frame.
-		frame.setSize(1200, 800);	//Sets the size of the frame, the dimension includes the edges of the frame.
+		frame.setSize(1216, 839);	//Sets the size of the frame, the dimension includes the edges of the frame.
 		frame.setVisible(true);	//Displays the frame.
-		
-		// July 29 (Erik) Creates a new message Class called messageCenter and adds it to the Jframe (game frame).
-		messageCenter  message = new messageCenter();
-		frame.add(message);
-		
 		frame.setLocationRelativeTo(null);	//Centers the frame.
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//Completely close the frame.
 	}
