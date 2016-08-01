@@ -515,7 +515,92 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 					graphics.drawImage(greenRectangle, flashX, flashY, this);
 		    }
 		}
+		//Devin display all the ships in the end
+		else if (imageSwitch == 6) {
+				if (player1Board.ROTCarrier == false)	//If the rotation switch for carrier is false...
+					graphics.drawImage(P1carrier, player1Board.carrierX, player1Board.carrierY, this);	//Draw carrier
+				else
+					graphics.drawImage(P1ROTcarrier, player1Board.carrierX, player1Board.carrierY, this);	//Draw rotated carrier
+			
+			
+				if (player1Board.ROTBattleship == false)
+					graphics.drawImage(P1battleship, player1Board.battleshipX, player1Board.battleshipY, this);
+				else
+					graphics.drawImage(P1ROTbattleship, player1Board.battleshipX, player1Board.battleshipY, this);
+			
+			
+				if (player1Board.ROTCruiser == false)
+					graphics.drawImage(P1cruiser, player1Board.cruiserX, player1Board.cruiserY, this);
+				else
+					graphics.drawImage(P1ROTcruiser, player1Board.cruiserX, player1Board.cruiserY, this);
+			
+			
+				if (player1Board.ROTDestroyer1 == false)
+					graphics.drawImage(P1destroyer1, player1Board.destroyer1X, player1Board.destroyer1Y, this);
+				else
+					graphics.drawImage(P1ROTdestroyer1, player1Board.destroyer1X, player1Board.destroyer1Y, this);
+			
+			
+				if (player1Board.ROTDestroyer2 == false)
+					graphics.drawImage(P1destroyer2, player1Board.destroyer2X, player1Board.destroyer2Y, this);
+				else
+					graphics.drawImage(P1ROTdestroyer2, player1Board.destroyer2X, player1Board.destroyer2Y, this);
+			
+			
+				if (player1Board.ROTSubmarine1 == false)
+					graphics.drawImage(P1submarine1, player1Board.submarine1X, player1Board.submarine1Y, this);
+				else
+					graphics.drawImage(P1ROTsubmarine1, player1Board.submarine1X, player1Board.submarine1Y, this);
+			
+			
+				if (player1Board.ROTSubmarine2 == false)
+					graphics.drawImage(P1submarine2, player1Board.submarine2X, player1Board.submarine2Y, this);
+				else
+					graphics.drawImage(P1ROTsubmarine2, player1Board.submarine2X, player1Board.submarine2Y, this);
+					
 		
+				if (player2Board.ROTCarrier == false)	//If the rotation switch for carrier is false...
+					graphics.drawImage(P2carrier, player2Board.carrierX, player2Board.carrierY, this);	//Draw carrier
+				else
+					graphics.drawImage(P2ROTcarrier, player2Board.carrierX, player2Board.carrierY, this);	//Draw rotated carrier
+			
+			
+				if (player2Board.ROTBattleship == false)
+					graphics.drawImage(P2battleship, player2Board.battleshipX, player2Board.battleshipY, this);
+				else
+					graphics.drawImage(P2ROTbattleship, player2Board.battleshipX, player2Board.battleshipY, this);
+			
+			
+				if (player2Board.ROTCruiser == false)
+					graphics.drawImage(P2cruiser, player2Board.cruiserX, player2Board.cruiserY, this);
+				else
+					graphics.drawImage(P2ROTcruiser, player2Board.cruiserX, player2Board.cruiserY, this);
+			
+			
+				if (player2Board.ROTDestroyer1 == false)
+					graphics.drawImage(P2destroyer1, player2Board.destroyer1X, player2Board.destroyer1Y, this);
+				else
+					graphics.drawImage(P2ROTdestroyer1, player2Board.destroyer1X, player2Board.destroyer1Y, this);
+			
+			
+				if (player2Board.ROTDestroyer2 == false)
+					graphics.drawImage(P2destroyer2, player2Board.destroyer2X, player2Board.destroyer2Y, this);
+				else
+					graphics.drawImage(P2ROTdestroyer2, player2Board.destroyer2X, player2Board.destroyer2Y, this);
+			
+			
+				if (player2Board.ROTSubmarine1 == false)
+					graphics.drawImage(P2submarine1, player2Board.submarine1X, player2Board.submarine1Y, this);
+				else
+					graphics.drawImage(P2ROTsubmarine1, player2Board.submarine1X, player2Board.submarine1Y, this);
+			
+			
+				if (player2Board.ROTSubmarine2 == false)
+					graphics.drawImage(P2submarine2, player2Board.submarine2X, player2Board.submarine2Y, this);
+				else
+					graphics.drawImage(P2ROTsubmarine2, player2Board.submarine2X, player2Board.submarine2Y, this);
+			
+		}
 	}
 	
 	
@@ -932,7 +1017,7 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 							if (victoryConditionMet) {
 								if (player1Board.name == null)
 									player1Board.name = "Player 1";
-								
+								imageSwitch = 6;
 								InputOutput.updateScores(player1Board);								
 								
 								JOptionPane.showMessageDialog(null, player1Board.name +" has won! \n Your Score has been recorded! Click 'Ok' to return to the main menu.");
@@ -950,7 +1035,7 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 							if (victoryConditionMet) {
 								if (player2Board.name == null)
 									player2Board.name = "Player 2";
-								
+								imageSwitch = 6;
 								InputOutput.updateScores(player2Board);								
 								
 								JOptionPane.showMessageDialog(null, player2Board.name +" has won! \n Your Score has been recorded! Click 'Ok' to return to the main menu.");
