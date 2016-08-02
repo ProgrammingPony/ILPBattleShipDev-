@@ -158,6 +158,14 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 		BufferedImage P2ROTdestroyer2 = null;
 		BufferedImage P2ROTsubmarine1 = null;
 		BufferedImage P2ROTsubmarine2 = null;
+		BufferedImage explosion = null;
+		
+		int frameWidth = 134; 
+		int frameHeight = 134;
+		int numberOfFrames = 12;
+		long frameTime = 45;
+		Boolean loopAnim = false;
+		long showDelay = 0;
 		
 		//Will try to open and assign images in project folder as specified, if failed then variable(s) stays null.
 		try {
@@ -202,6 +210,8 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 			P2ROTdestroyer2 = ImageIO.read(new File("ROT Destroyer2.png"));
 			P2ROTsubmarine1 = ImageIO.read(new File("ROT Submarine1.png"));
 			P2ROTsubmarine2 = ImageIO.read(new File("ROT Submarine2.png"));
+			
+			explosion = ImageIO.read(new File("explosion_anim.png"));
 		} 
 		catch (IOException e) {
 		    System.out.print("Unable to load one or more images.");
@@ -314,25 +324,35 @@ public class Board extends JPanel implements ActionListener, MouseListener, KeyL
 			}
 				
 		    //Draw playerTiles which have been hit	
-		    BattleGrid.ShipLabel ship;
+		    BattleGrid.ShipLabel ship;		    
 		        
 		    for (int[] item : player1Board.getHitTiles()) {
 		      ship = player1Board.getShipOccupyingSquare(item[0], item[1]);
-		      if (ship != BattleGrid.ShipLabel.NO_SHIP)
-		        graphics.setColor(Color.orange);
-		      else
+		      if (ship != BattleGrid.ShipLabel.NO_SHIP){
+		        //graphics.setColor(Color.orange);
+		        Animation expAnim = new Animation(explosion, 
+		    			frameWidth, frameHeight, numberOfFrames, frameTime, 
+		    			loopAnim, item[1]*50+23, item[0]*50+81 , showDelay);
+		      expAnim.Draw(graphics);}
+		      else{
 		        graphics.setColor(Color.red);
-		      graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);
+		      graphics.fillRect(item[1]*50+73, item[0]*50+131, 45, 45);}
+		      
+		      
 		    }
 			  
 		    //Draw computerTiles which have been hit
 		    for (int[] item : computer.computerGrid.getHitTiles()) {
 		      ship = computer.computerGrid.getShipOccupyingSquare(item[0], item[1]);	
-		      if (ship != BattleGrid.ShipLabel.NO_SHIP)
-			    graphics.setColor(Color.orange);
-			  else
+		      if (ship != BattleGrid.ShipLabel.NO_SHIP){
+			    //graphics.setColor(Color.orange);
+		    	  Animation expAnim = new Animation(explosion, 
+			    			frameWidth, frameHeight, numberOfFrames, frameTime, 
+			    			loopAnim, item[1]*50+583, item[0]*50+81 , showDelay);
+			      expAnim.Draw(graphics);}
+			  else{
 			    graphics.setColor(Color.red);
-			  graphics.fillRect(item[1]*50+633, item[0]*50+131, 45, 45);	  
+			  graphics.fillRect(item[1]*50+633, item[0]*50+131, 45, 45);}  
 	        }
 		    
 		    //Draw color tiles which haven't been hit	    
